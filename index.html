@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bhargav Kacharla — Protocol Engineer</title>
+  <meta name="description" content="Portfolio concept for Bhargav Kacharla — protocol engineer building DeFi systems, perps infrastructure, smart contracts, risk engines, and autonomous on-chain agents." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #070b18;
+      --bg2: #0a0f1c;
+      --panel: rgba(13, 17, 31, 0.76);
+      --panel2: rgba(18, 27, 45, 0.62);
+      --border: rgba(148, 163, 184, 0.14);
+      --border2: rgba(255,255,255,.07);
+      --text: #f8fafc;
+      --muted: #a7b0c0;
+      --faint: #64748b;
+      --cyan: #22e6ff;
+      --teal: #14f1d9;
+      --pink: #ff168c;
+      --amber: #f8b84e;
+      --violet: #8b5cf6;
+      --green: #27c93f;
+      --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+      --display: 'Sora', 'Space Grotesk', system-ui, sans-serif;
+      --sans: 'Space Grotesk', system-ui, sans-serif;
+      --max: 1240px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: var(--sans);
+      background: var(--bg2);
+      overflow-x: hidden;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    .noise, .mesh, .grid, .particles { position: fixed; inset: 0; pointer-events: none; }
+    .mesh {
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 62% 48% at 26% 42%, rgba(0, 229, 255, .105), transparent 70%),
+        radial-gradient(ellipse 45% 40% at 70% 58%, rgba(255, 22, 140, .075), transparent 72%),
+        radial-gradient(circle at 56% 18%, rgba(139, 92, 246, .08), transparent 38%),
+        linear-gradient(180deg, #0a0f1c 0%, #070b18 48%, #050813 100%);
+    }
+    .grid {
+      z-index: 1;
+      opacity: .22;
+      background-image: radial-gradient(rgba(34, 230, 255, .24) 1px, transparent 1px);
+      background-size: 54px 54px;
+      mask-image: linear-gradient(to bottom, black, transparent 84%);
+    }
+    .noise {
+      z-index: 2;
+      opacity: .045;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.65'/%3E%3C/svg%3E");
+    }
+    .particles {
+      z-index: 3;
+      opacity: .48;
+      background:
+        radial-gradient(circle at 14% 25%, var(--cyan) 0 2px, transparent 2.5px),
+        radial-gradient(circle at 29% 18%, var(--violet) 0 1.5px, transparent 2px),
+        radial-gradient(circle at 38% 62%, var(--cyan) 0 2px, transparent 2.5px),
+        radial-gradient(circle at 57% 36%, var(--pink) 0 1.5px, transparent 2px),
+        radial-gradient(circle at 76% 22%, var(--cyan) 0 2px, transparent 2.5px),
+        radial-gradient(circle at 86% 68%, var(--pink) 0 2px, transparent 2.5px),
+        linear-gradient(28deg, transparent 13.8%, rgba(34,230,255,.18) 14%, transparent 14.2% 100%),
+        linear-gradient(154deg, transparent 35.8%, rgba(139,92,246,.14) 36%, transparent 36.2% 100%),
+        linear-gradient(109deg, transparent 69.8%, rgba(255,22,140,.14) 70%, transparent 70.2% 100%);
+      animation: drift 16s ease-in-out infinite alternate;
+    }
+    @keyframes drift { from { transform: translate3d(-12px, -8px, 0) scale(1); } to { transform: translate3d(16px, 10px, 0) scale(1.02); } }
+
+    .page { position: relative; z-index: 4; }
+    .container { width: min(var(--max), calc(100% - 48px)); margin: 0 auto; }
+
+    header.nav {
+      position: fixed;
+      left: 0; right: 0; top: 0;
+      z-index: 50;
+      backdrop-filter: blur(18px);
+      background: linear-gradient(180deg, rgba(10,15,28,.84), rgba(10,15,28,.44));
+      border-bottom: 1px solid rgba(255,255,255,.035);
+    }
+    .nav-inner { height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .mark {
+      width: 34px; height: 34px; border-radius: 9px;
+      display: grid; place-items: center;
+      background: rgba(20, 241, 217, .10);
+      border: 1px solid rgba(34,230,255,.18);
+      color: var(--cyan);
+      font-family: var(--mono); font-size: 13px; font-weight: 700;
+      box-shadow: 0 0 28px rgba(0,229,255,.14);
+    }
+    .brand-name { color: #cbd5e1; font-weight: 600; letter-spacing: -.02em; }
+    .navlinks { display: flex; align-items: center; gap: 4px; }
+    .navlinks a { padding: 10px 13px; border-radius: 10px; color: #94a3b8; font-size: 14px; transition: .18s ease; }
+    .navlinks a:hover { background: rgba(255,255,255,.05); color: #fff; }
+    .navtools { display: flex; align-items: center; gap: 10px; }
+    .status, .tinybtn {
+      height: 34px; display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid rgba(255,255,255,.07); background: rgba(255,255,255,.035);
+      color: #94a3b8; border-radius: 10px; padding: 0 11px; font-family: var(--mono); font-size: 11px;
+    }
+    .status { border-color: rgba(248,184,78,.16); background: rgba(248,184,78,.04); color: rgba(248,184,78,.78); }
+    .status i { width: 7px; height: 7px; border-radius: 999px; background: rgba(248,184,78,.8); box-shadow: 0 0 14px rgba(248,184,78,.5); }
+    .cta { background: var(--cyan); color: #06101a !important; font-weight: 700; padding: 10px 15px !important; box-shadow: 0 0 26px rgba(34,230,255,.22); border-radius: 10px; }
+
+    .hero { min-height: 100vh; display: flex; align-items: center; padding: 116px 0 86px; position: relative; overflow: hidden; }
+    .hero-grid { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(390px, 500px); gap: 72px; align-items: center; }
+    .label { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .22em; color: #526078; text-transform: uppercase; margin-bottom: 12px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 10px; color: #cbd5e1; border: 1px solid rgba(255,255,255,.075); background: rgba(255,255,255,.035); border-radius: 999px; padding: 8px 12px; font-family: var(--mono); font-size: 12px; margin-bottom: 26px; }
+    .dot { width: 7px; height: 7px; border-radius: 99px; background: var(--green); box-shadow: 0 0 16px rgba(39,201,63,.8); }
+    h1 { margin: 0; font-family: var(--display); font-size: clamp(50px, 7.2vw, 92px); line-height: .93; letter-spacing: -.065em; font-weight: 800; max-width: 860px; }
+    .gradient-text { background: linear-gradient(90deg, var(--cyan), var(--violet) 50%, var(--pink)); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 0 48px rgba(34,230,255,.10); }
+    .hero-copy { max-width: 700px; margin: 28px 0 0; color: #a6b0c1; font-size: clamp(18px, 2vw, 22px); line-height: 1.58; letter-spacing: -.02em; }
+    .pills { display: flex; flex-wrap: wrap; gap: 9px; margin: 30px 0 0; }
+    .pill { border: 1px solid rgba(255,255,255,.075); background: rgba(255,255,255,.035); border-radius: 999px; padding: 7px 12px; color: #728197; font-family: var(--mono); font-size: 12px; }
+    .pill.hot { color: var(--cyan); border-color: rgba(34,230,255,.24); background: linear-gradient(90deg, rgba(34,230,255,.10), rgba(139,92,246,.06)); }
+    .actions { margin-top: 34px; display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+    .primary { display: inline-flex; align-items: center; gap: 9px; min-height: 54px; padding: 0 24px; border-radius: 14px; background: linear-gradient(90deg, var(--pink), #ff4ca8); color: #0a0f1c; font-weight: 800; box-shadow: 0 0 34px rgba(255,22,140,.24); }
+    .secondary { color: #94a3b8; font-size: 15px; }
+    .secondary b { color: var(--cyan); }
+
+    .terminal {
+      border: 1px solid rgba(255,255,255,.075); border-radius: 22px; overflow: hidden;
+      background: rgba(9, 13, 24, .88); backdrop-filter: blur(20px);
+      box-shadow: 0 34px 100px rgba(0,0,0,.52), 0 0 70px rgba(34,230,255,.08);
+      position: relative;
+    }
+    .terminal:before { content: ''; position: absolute; inset: -1px; border-radius: 22px; padding: 1px; background: linear-gradient(135deg, rgba(34,230,255,.35), transparent 30%, rgba(255,22,140,.28)); mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude; pointer-events: none; }
+    .bar { height: 46px; display: flex; align-items: center; gap: 12px; padding: 0 16px; border-bottom: 1px solid rgba(255,255,255,.045); }
+    .dots { display: flex; gap: 7px; }
+    .dots i { width: 11px; height: 11px; border-radius: 99px; display: block; }
+    .dots i:nth-child(1){ background:#ff5f56; }.dots i:nth-child(2){ background:#ffbd2e; }.dots i:nth-child(3){ background:#27c93f; }
+    .title { font-family: var(--mono); font-size: 12px; color: #64748b; }
+    .term-body { min-height: 390px; padding: 22px; font-family: var(--mono); font-size: 12px; line-height: 1.72; }
+    .json { color: #77849a; white-space: pre-wrap; margin: 0; }
+    .json .k { color: var(--pink); }.json .s { color: #c4b5fd; }.json .n { color: var(--cyan); }.json .b { color: var(--amber); }
+    .prompt { margin-top: 18px; color: var(--cyan); }
+    .output { color: #cbd5e1; margin-top: 8px; }
+    .ok { color: var(--green); }.cursor { display: inline-block; width: 8px; height: 16px; background: var(--cyan); vertical-align: -3px; animation: blink 1s steps(2) infinite; box-shadow: 0 0 14px rgba(34,230,255,.6); }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .signal-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; border: 1px solid rgba(255,255,255,.06); border-radius: 20px; overflow: hidden; background: rgba(255,255,255,.06); margin-top: 58px; }
+    .signal { background: rgba(15,23,42,.58); padding: 22px; }
+    .signal strong { display: block; color: #f8fafc; font-size: 20px; margin-bottom: 7px; }
+    .signal span { color: #8d9aaf; font-size: 14px; line-height: 1.5; }
+
+    section { padding: 92px 0; position: relative; }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 26px; margin-bottom: 34px; }
+    .section-head h2, .section-title h2 { margin: 0; font-family: var(--display); font-size: clamp(38px, 5vw, 62px); line-height: 1; letter-spacing: -.05em; }
+    .section-copy, .section-title p { max-width: 640px; color: #9aa7bc; font-size: 18px; line-height: 1.6; }
+    .section-title { text-align: center; margin-bottom: 48px; }
+    .section-title p { margin: 18px auto 0; }
+
+    .work-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .project-card { min-height: 352px; border: 1px solid rgba(255,255,255,.075); border-radius: 26px; background: rgba(15,23,42,.68); backdrop-filter: blur(18px); padding: 28px; position: relative; overflow: hidden; box-shadow: 0 24px 80px rgba(0,0,0,.32); }
+    .project-card.featured { grid-column: span 2; min-height: 420px; display: grid; grid-template-columns: 1fr .86fr; gap: 28px; border-color: rgba(34,230,255,.28); }
+    .project-card:after { content: ''; position: absolute; inset: auto -20% -45% 20%; height: 240px; background: radial-gradient(circle, rgba(34,230,255,.12), transparent 65%); pointer-events: none; }
+    .project-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 24px; position: relative; z-index: 1; }
+    .project-name { font-family: var(--display); font-size: 30px; font-weight: 800; letter-spacing: -.04em; }
+    .project-title { color: #9aa7bc; margin-top: 5px; font-size: 15px; }
+    .year { font-family: var(--mono); color: #64748b; font-size: 12px; white-space: nowrap; }
+    .project-desc { color: #a7b0c0; line-height: 1.72; font-size: 16px; margin: 22px 0 0; position: relative; z-index: 1; }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; position: relative; z-index: 1; }
+    .tag { font-family: var(--mono); font-size: 11px; color: #94a3b8; border: 1px solid rgba(255,255,255,.075); border-radius: 999px; padding: 6px 9px; background: rgba(255,255,255,.035); }
+    .system-map { border: 1px solid rgba(255,255,255,.065); background: rgba(0,0,0,.22); border-radius: 18px; padding: 18px; position: relative; z-index: 1; }
+    .node { border: 1px solid rgba(255,255,255,.075); border-radius: 14px; padding: 13px; margin-bottom: 10px; background: rgba(255,255,255,.035); }
+    .node small { display: block; color: #64748b; font-family: var(--mono); font-size: 10px; margin-bottom: 5px; }
+    .node strong { color: #dbeafe; font-size: 13px; font-weight: 600; }
+    .arrow { color: var(--cyan); font-family: var(--mono); font-size: 12px; text-align: center; margin: 4px 0 10px; }
+
+    .systems-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 13px; }
+    .system-card { border: 1px solid rgba(255,255,255,.06); background: rgba(15,23,42,.58); border-radius: 20px; padding: 20px; min-height: 168px; }
+    .system-icon { font-family: var(--mono); color: var(--cyan); font-size: 12px; margin-bottom: 21px; }
+    .system-card h3 { margin: 0 0 9px; font-size: 19px; font-weight: 700; letter-spacing: -.025em; }
+    .system-card p { margin: 0; color: #8d9aaf; font-size: 14px; line-height: 1.55; }
+
+    .agent-panel { border: 1px solid rgba(34,230,255,.20); background: linear-gradient(135deg, rgba(34,230,255,.08), rgba(255,255,255,.03), rgba(255,22,140,.06)); border-radius: 30px; padding: 34px; display: grid; grid-template-columns: .9fr 1.1fr; gap: 28px; overflow: hidden; }
+    .agent-panel h2 { margin: 0; font-family: var(--display); font-size: clamp(38px, 5vw, 60px); line-height: 1; letter-spacing: -.05em; }
+    .agent-panel p { color: #a7b0c0; line-height: 1.7; font-size: 17px; }
+    .agent-grid { display: grid; gap: 12px; }
+    .agent { border: 1px solid rgba(255,255,255,.07); background: rgba(0,0,0,.20); border-radius: 16px; padding: 15px; display: flex; gap: 13px; align-items: flex-start; }
+    .agent b { color: var(--cyan); font-family: var(--mono); font-size: 12px; margin-top: 2px; }
+    .agent span { color: #cbd5e1; line-height: 1.5; font-size: 14px; }
+
+    .security-panel { border: 1px solid rgba(139,92,246,.20); background: rgba(15,23,42,.62); border-radius: 30px; padding: 34px; display: grid; grid-template-columns: .9fr 1.1fr; gap: 28px; }
+    .security-panel h2 { margin: 0; font-family: var(--display); font-size: clamp(36px, 5vw, 58px); line-height: 1; letter-spacing: -.05em; }
+    .security-panel p { color: #a7b0c0; line-height: 1.7; font-size: 17px; }
+    .checklist { display: grid; gap: 10px; }
+    .check { border: 1px solid rgba(255,255,255,.065); background: rgba(0,0,0,.18); border-radius: 15px; padding: 14px; display: flex; gap: 12px; color: #cbd5e1; line-height: 1.5; font-size: 14px; }
+    .check b { color: var(--green); font-family: var(--mono); }
+
+    .timeline { border-left: 1px solid rgba(255,255,255,.09); margin-left: 8px; }
+    .timeline-item { position: relative; padding: 0 0 30px 28px; }
+    .timeline-item:before { content: ''; position: absolute; left: -5px; top: 4px; width: 9px; height: 9px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 20px rgba(34,230,255,.75); }
+    .timeline-top { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 7px; }
+    .timeline h3 { margin: 0; font-size: 20px; font-weight: 700; }
+    .timeline p { margin: 0; color: #8d9aaf; line-height: 1.62; max-width: 820px; }
+
+    .contact { padding-bottom: 120px; }
+    .contact-box { text-align: center; border: 1px solid rgba(255,255,255,.075); background: linear-gradient(135deg, rgba(34,230,255,.08), rgba(255,255,255,.03), rgba(255,22,140,.06)); border-radius: 32px; padding: 58px 24px; }
+    .contact h2 { margin: 0 auto; max-width: 880px; font-family: var(--display); font-size: clamp(40px,5vw,72px); line-height: 1; letter-spacing: -.055em; }
+    .contact p { max-width: 650px; color: #a7b0c0; margin: 20px auto 30px; font-size: 20px; line-height: 1.6; }
+
+    @media (max-width: 1050px) {
+      .hero-grid, .project-card.featured, .agent-panel, .security-panel { grid-template-columns: 1fr; }
+      .terminal { max-width: 650px; }
+      .signal-row, .systems-grid { grid-template-columns: repeat(2, 1fr); }
+      .section-head { align-items: start; flex-direction: column; }
+      .navlinks { display: none; }
+    }
+    @media (max-width: 680px) {
+      .container { width: min(100% - 28px, var(--max)); }
+      .status, .tinybtn, .brand-name { display: none; }
+      .hero { padding-top: 94px; }
+      .term-body { font-size: 11px; padding: 17px; }
+      .actions { align-items: stretch; flex-direction: column; }
+      .primary { justify-content: center; }
+      .signal-row, .systems-grid, .work-grid { grid-template-columns: 1fr; }
+      .project-card.featured { grid-column: span 1; }
+      .timeline-top { flex-direction: column; gap: 4px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+  </style>
+</head>
+<body>
+  <div class="mesh"></div><div class="grid"></div><div class="particles"></div><div class="noise"></div>
+  <div class="page">
+    <header class="nav">
+      <div class="container nav-inner">
+        <a href="#top" class="logo"><span class="mark">BK</span><span class="brand-name">Bhargav Kacharla</span></a>
+        <nav class="navlinks" aria-label="Primary">
+          <a href="#work">Work</a><a href="#systems">Systems</a><a href="#agents">Agents</a><a href="#security">Security</a><a href="#timeline">Timeline</a>
+        </nav>
+        <div class="navtools"><span class="status"><i></i>BUILD MODE</span><a class="tinybtn" href="https://github.com/bhargav55" target="_blank" rel="noreferrer">GH</a><a class="cta" href="#contact">Let's build</a></div>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="container">
+          <div class="hero-grid">
+            <div>
+              <div class="eyebrow"><span class="dot"></span> Protocol engineer · DeFi systems · Bangalore</div>
+              <h1>Bhargav <span class="gradient-text">Kacharla</span></h1>
+              <p class="hero-copy">I design and ship smart contracts, matching engines, risk engines, liquidation systems, cross-chain infrastructure, oracle integrations, and autonomous AI agents.</p>
+              <div class="pills"><span class="pill hot">Perps Infrastructure</span><span class="pill">Smart Contract Security</span><span class="pill">Solidity / Rust / Move</span></div>
+              <div class="actions"><a class="primary" href="#work">View featured work →</a><a class="secondary" href="https://github.com/bhargav55" target="_blank" rel="noreferrer">GitHub</a><a class="secondary" href="mailto:kacharlabhargav21@gmail.com">Contact</a></div>
+            </div>
+
+            <aside class="terminal" aria-label="Protocol profile terminal">
+              <div class="bar"><div class="dots"><i></i><i></i><i></i></div><span class="title">bhargav@protocol ~ zsh</span></div>
+              <div class="term-body">
+<pre class="json">{
+  <span class="k">"name"</span>: <span class="s">"Bhargav Kacharla"</span>,
+  <span class="k">"role"</span>: <span class="s">"Blockchain / Backend Engineer"</span>,
+  <span class="k">"current_build"</span>: <span class="s">"perps infrastructure"</span>,
+  <span class="k">"surfaces"</span>: [<span class="s">"CLOB"</span>, <span class="s">"AMM"</span>, <span class="s">"Clearing House"</span>, <span class="s">"Risk Engine"</span>],
+  <span class="k">"markets"</span>: [
+    <span class="s">"perpetuals"</span>,
+    <span class="s">"option trading"</span>,
+    <span class="s">"prediction markets"</span>
+  ],
+  <span class="k">"agentic_commerce"</span>: [<span class="s">"ERC-8004"</span>, <span class="s">"ERC-8183"</span>, <span class="s">"on-chain autonomous agents"</span>]
+}</pre>
+                <div class="prompt">~ &gt; protocol status</div>
+                <div class="output"><span class="ok">✓</span> perps matching engine<br><span class="ok">✓</span> liquidation + risk flows<br><span class="ok">✓</span> oracle integrations<br><span class="ok">✓</span> autonomous execution layer</div>
+                <div class="prompt">~ &gt; echo $CURRENT_FOCUS</div>
+                <div class="output">Building DeFi systems that are secure, automated, and production-ready.</div>
+                <div class="prompt">~ &gt; <span class="cursor"></span></div>
+              </div>
+            </aside>
+          </div>
+
+        </div>
+      </section>
+
+      <section id="systems">
+        <div class="container">
+          <div class="section-head"><div><span class="label">01 / SYSTEMS</span><h2>Surfaces where I create leverage.</h2></div><p class="section-copy">A fast scan of the technical domains I can own end-to-end.</p></div>
+          <div class="systems-grid">
+            <div class="system-card"><div class="system-icon">[01]</div><h3>Perps infrastructure</h3><p>CLOB, AMM, Clearing House, funding, margin, settlement, and liquidation flows.</p></div>
+            <div class="system-card"><div class="system-icon">[02]</div><h3>Smart contracts</h3><p>Upgradeable Solidity systems, protocol modules, access control, and storage-aware architecture.</p></div>
+            <div class="system-card"><div class="system-icon">[03]</div><h3>Risk engines</h3><p>Position accounting, oracle-driven checks, liquidation eligibility, and invariant thinking.</p></div>
+            <div class="system-card"><div class="system-icon">[04]</div><h3>Protocol agents</h3><p>Autonomous agents for liquidation, take-profit/stop-loss, monitoring, and job execution.</p></div>
+            <div class="system-card"><div class="system-icon">[05]</div><h3>Cross-chain infra</h3><p>Bridge aggregation, SDK/API surfaces, event indexing, and chain abstraction.</p></div>
+            <div class="system-card"><div class="system-icon">[06]</div><h3>Account abstraction</h3><p>ERC-4337, bundler infra, EVM networks, and institutional blockchain environments.</p></div>
+            <div class="system-card"><div class="system-icon">[07]</div><h3>Indexers</h3><p>Real-time blockchain event pipelines for analytics, trading metrics, and protocol stats.</p></div>
+            <div class="system-card"><div class="system-icon">[08]</div><h3>Security workflows</h3><p>Automated review loops, static analysis, audit prep, and exploit-pattern learning.</p></div>
+          </div>
+        </div>
+      </section>
+
+
+      <section id="work">
+        <div class="container">
+          <div class="section-head">
+            <div><span class="label">02 / FEATURED WORK</span><h2>Protocol work presented as systems, not resume bullets.</h2></div>
+            <p class="section-copy">Each project is framed around the protocol surface, engineering complexity, and security context — not just job history.</p>
+          </div>
+
+          <div class="work-grid">
+            <article class="project-card featured">
+              <div>
+                <div class="project-top"><div><div class="project-name">Nunchi.trade</div><div class="project-title">Protocol Engineer · Perpetual derivatives</div></div><div class="year">2025 — Present</div></div>
+                <p class="project-desc">Architected an on-chain CLOB + AMM matching engine for perpetuals on yield-bearing assets. Built core Solidity surfaces for orderbook matching, Clearing House settlement, risk engine, liquidation flow, oracle integrations, and AI-native liquidation / TP-SL execution.</p>
+                <div class="tags"><span class="tag">Solidity</span><span class="tag">Perps</span><span class="tag">CLOB</span><span class="tag">AMM</span><span class="tag">Pyth</span><span class="tag">Stork</span><span class="tag">Agents</span></div>
+              </div>
+              <div class="system-map" aria-label="Nunchi system map">
+                <div class="node"><small>INPUT</small><strong>Orders · Positions · Oracle Prices</strong></div>
+                <div class="arrow">↓ validate / match</div>
+                <div class="node"><small>CORE</small><strong>Orderbook → Clearing House → Risk Engine</strong></div>
+                <div class="arrow">↓ monitor</div>
+                <div class="node"><small>AUTOMATION</small><strong>Liquidation agents · TP/SL jobs · Proofs</strong></div>
+                <div class="arrow">↓ settle</div>
+                <div class="node"><small>OUTPUT</small><strong>Funding exposure hedged on-chain</strong></div>
+              </div>
+            </article>
+
+            <article class="project-card"><div class="project-top"><div><div class="project-name">Novastro</div><div class="project-title">Protocol Engineer</div></div><div class="year">2024 — 2025</div></div><p class="project-desc">Built RWA tokenization using ERC-3643, prediction market contracts, cross-protocol yield strategies, bridge aggregation across 15+ bridges, SDK/API surfaces, Aptos Move DEX work, Solana launchpad work, and real-time event indexing.</p><div class="tags"><span class="tag">ERC-3643</span><span class="tag">RWA</span><span class="tag">Move</span><span class="tag">Rust</span><span class="tag">Indexing</span></div></article>
+            <article class="project-card"><div class="project-top"><div><div class="project-name">Xalts</div><div class="project-title">Lead Blockchain Engineer</div></div><div class="year">2024</div></div><p class="project-desc">Implemented ERC-4337 account abstraction across Polygon, Avalanche subnet, and Hyperledger Besu. Developed in-house bundler infrastructure with Skandha and built smart contracts for asset tokenization for financial institutions.</p><div class="tags"><span class="tag">ERC-4337</span><span class="tag">Bundlers</span><span class="tag">Besu</span><span class="tag">GraphQL</span><span class="tag">MongoDB</span></div></article>
+            <article class="project-card"><div class="project-top"><div><div class="project-name">Oddz</div><div class="project-title">Blockchain Engineer</div></div><div class="year">2021 — 2022</div></div><p class="project-desc">Led Solidity development for options trading, staking, liquidity provisioning, gasless transactions, and automation frameworks using OpenZeppelin Defender, Biconomy, Chainlink Keepers, and Gelato.</p><div class="tags"><span class="tag">Options</span><span class="tag">Staking</span><span class="tag">Gelato</span><span class="tag">Chainlink</span><span class="tag">Defender</span></div></article>
+          </div>
+        </div>
+      </section>
+
+      <section id="agents">
+        <div class="container">
+          <div class="agent-panel">
+            <div><span class="label">03 / AGENTS</span><h2>Autonomous agents as protocol infrastructure.</h2><p>This is separate from the core portfolio content: a dedicated section for the 24/7 agentic audit system, protocol jobs, and AI-native execution layer.</p></div>
+            <div class="agent-grid">
+              <div class="agent"><b>01</b><span><strong>Self-Evolving Audit Hunter</strong><br>Autonomous audit agents that hunt active contests, audit Solidity repos, report findings, and learn from disclosed exploit patterns over time.</span></div>
+              <div class="agent"><b>02</b><span><strong>Liquidation / TP-SL agents</strong><br>AI-native CLI flow for autonomous agents to execute protocol jobs against live positions.</span></div>
+              <div class="agent"><b>03</b><span><strong>On-chain agent marketplace</strong><br>Agents register for protocol jobs, complete them, submit proof-of-completion, and claim incentives.</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="security">
+        <div class="container">
+          <div class="security-panel">
+            <div><span class="label">04 / SECURITY POSTURE</span><h2>Security first.</h2><p>My protocol work starts with what can break: accounting invariants, oracle failure modes, liquidation edge cases, permission boundaries, upgrade paths, and how an attacker would chain them.</p></div>
+            <div class="checklist">
+              <div class="check"><b>✓</b><span>Worked with Quantstamp and Zellic on external audits for Nunchi contracts.</span></div>
+              <div class="check"><b>✓</b><span>Use Slither and Trail of Bits tooling as part of development and review workflows.</span></div>
+              <div class="check"><b>✓</b><span>Built internal Claude Code skills for smart contract audit and developer workflow acceleration.</span></div>
+              <div class="check"><b>✓</b><span>Focused on liquidation safety, oracle correctness, accounting invariants, and upgrade risk.</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="timeline">
+        <div class="container">
+          <div class="section-head"><div><span class="label">05 / TIMELINE</span><h2>Experience arc.</h2></div></div>
+          <div class="timeline">
+            <div class="timeline-item"><div class="timeline-top"><h3>Perps Protocol · Protocol Engineer</h3><div class="year">2025 — Present</div></div><p>Perpetual derivatives protocol for yield-bearing assets, including matching, settlement, risk, liquidation, oracle, security, and agent automation layers.</p></div>
+            <div class="timeline-item"><div class="timeline-top"><h3>Novastro · Protocol Engineer</h3><div class="year">2024 — 2025</div></div><p>RWA tokenization, prediction markets, cross-chain bridge aggregation, yield strategies, Move/Rust protocol work, and real-time indexing systems.</p></div>
+            <div class="timeline-item"><div class="timeline-top"><h3>Xalts · Lead Blockchain Engineer</h3><div class="year">2024</div></div><p>Account abstraction and tokenization infrastructure for EVM and enterprise blockchain environments.</p></div>
+            <div class="timeline-item"><div class="timeline-top"><h3>Oddz · Blockchain Engineer</h3><div class="year">2021 — 2022</div></div><p>Options protocol, staking, liquidity provisioning, relayers, and DeFi automation.</p></div>
+            <div class="timeline-item"><div class="timeline-top"><h3>Earlier · Data / Software Engineering</h3><div class="year">2015 — 2021</div></div><p>Rakuten, OpenText, and Tata Consultancy Services — backend, data, and software engineering foundations.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="contact">
+        <div class="container"><div class="contact-box"><span class="label">CONTACT</span><h2>Want to build a DeFi protocol?</h2><p>Reach out for protocol engineering, smart contract architecture, audit readiness, or autonomous agent systems for on-chain execution.</p><div class="actions" style="justify-content:center"><a class="primary" href="mailto:kacharlabhargav21@gmail.com">Email me</a><a class="secondary" href="https://github.com/bhargav55" target="_blank" rel="noreferrer">GitHub <b>↗</b></a><a class="secondary" href="https://x.com/K_Bhargav21" target="_blank" rel="noreferrer">X <b>↗</b></a><a class="secondary" href="https://www.linkedin.com/in/bhargav-kacharla-9a4b3552/" target="_blank" rel="noreferrer">LinkedIn <b>↗</b></a></div></div></div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
