@@ -177,11 +177,6 @@
     .project-desc { color: #a7b0c0; line-height: 1.72; font-size: 16px; margin: 22px 0 0; position: relative; z-index: 1; }
     .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; position: relative; z-index: 1; }
     .tag { font-family: var(--mono); font-size: 11px; color: #94a3b8; border: 1px solid rgba(255,255,255,.075); border-radius: 999px; padding: 6px 9px; background: rgba(255,255,255,.035); }
-    .system-map { border: 1px solid rgba(255,255,255,.065); background: rgba(0,0,0,.22); border-radius: 18px; padding: 18px; position: relative; z-index: 1; }
-    .node { border: 1px solid rgba(255,255,255,.075); border-radius: 14px; padding: 13px; margin-bottom: 10px; background: rgba(255,255,255,.035); }
-    .node small { display: block; color: #64748b; font-family: var(--mono); font-size: 10px; margin-bottom: 5px; }
-    .node strong { color: #dbeafe; font-size: 13px; font-weight: 600; }
-    .arrow { color: var(--cyan); font-family: var(--mono); font-size: 12px; text-align: center; margin: 4px 0 10px; }
 
     .systems-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 13px; }
     .system-card { border: 1px solid rgba(255,255,255,.06); background: rgba(15,23,42,.58); border-radius: 20px; padding: 20px; min-height: 168px; }
@@ -321,15 +316,6 @@
                 <div class="project-top"><div><div class="project-name">Nunchi.trade</div><div class="project-title">Senior Engineer (Blockchain + Agents)</div></div><div class="year">2025 — Present</div></div>
                 <p class="project-desc">Architected an on-chain CLOB + AMM matching engine for perpetuals on yield-bearing assets. Built core Solidity surfaces for orderbook matching, Clearing House settlement, risk engine, liquidation flow, oracle integrations, and AI-native liquidation / TP-SL execution.</p>
                 <div class="tags"><span class="tag">Solidity</span><span class="tag">Perps</span><span class="tag">CLOB</span><span class="tag">AMM</span><span class="tag">Pyth</span><span class="tag">Stork</span><span class="tag">Agents</span></div>
-              </div>
-              <div class="system-map" aria-label="Nunchi system map">
-                <div class="node"><small>INPUT</small><strong>Orders · Positions · Oracle Prices</strong></div>
-                <div class="arrow">↓ validate / match</div>
-                <div class="node"><small>CORE</small><strong>Orderbook → Clearing House → Risk Engine</strong></div>
-                <div class="arrow">↓ monitor</div>
-                <div class="node"><small>AUTOMATION</small><strong>Liquidation agents · TP/SL jobs · Proofs</strong></div>
-                <div class="arrow">↓ settle</div>
-                <div class="node"><small>OUTPUT</small><strong>Funding exposure hedged on-chain</strong></div>
               </div>
             </article>
 
