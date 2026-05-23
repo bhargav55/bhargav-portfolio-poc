@@ -630,7 +630,13 @@
         const response = await fetch(agentEndpoint, {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ question, topK: 4, maxTurns: 6 }),
+          body: JSON.stringify({
+            tenantId: "personal",
+            siteId: "bhargav-portfolio",
+            question,
+            topK: 4,
+            maxTurns: 6,
+          }),
         });
 
         if (!response.ok) {
