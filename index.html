@@ -218,6 +218,42 @@
     .contact h2 { margin: 0 auto; max-width: 880px; font-family: var(--display); font-size: clamp(40px,5vw,72px); line-height: 1; letter-spacing: -.055em; }
     .contact p { max-width: 650px; color: #a7b0c0; margin: 20px auto 30px; font-size: 20px; line-height: 1.6; }
 
+    .ask-widget { position: fixed; right: 22px; bottom: 22px; z-index: 80; font-family: var(--sans); }
+    .ask-toggle {
+      width: 154px; min-height: 54px; border: 1px solid rgba(34,230,255,.34); border-radius: 18px;
+      background: linear-gradient(135deg, rgba(34,230,255,.18), rgba(255,22,140,.14)), rgba(8,13,25,.92);
+      color: #f8fafc; box-shadow: 0 18px 60px rgba(0,0,0,.42), 0 0 34px rgba(34,230,255,.18);
+      display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px;
+      padding: 9px 15px; cursor: pointer; backdrop-filter: blur(18px); text-align: left;
+    }
+    .ask-toggle span { color: var(--cyan); font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+    .ask-toggle b { font-size: 15px; letter-spacing: -.02em; }
+    .ask-panel {
+      position: absolute; right: 0; bottom: 68px; width: min(410px, calc(100vw - 28px)); height: min(620px, calc(100vh - 104px));
+      display: none; grid-template-rows: auto 1fr auto; overflow: hidden;
+      border: 1px solid rgba(255,255,255,.09); border-radius: 24px;
+      background: rgba(7,11,24,.96); backdrop-filter: blur(22px);
+      box-shadow: 0 30px 110px rgba(0,0,0,.58), 0 0 70px rgba(34,230,255,.10);
+    }
+    .ask-widget[data-open="true"] .ask-panel { display: grid; }
+    .ask-head { padding: 16px; border-bottom: 1px solid rgba(255,255,255,.07); display: flex; justify-content: space-between; gap: 14px; align-items: flex-start; }
+    .ask-head strong { display: block; font-size: 17px; letter-spacing: -.03em; }
+    .ask-head p { margin: 5px 0 0; color: #8794aa; font-size: 12px; line-height: 1.45; }
+    .ask-close { border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.04); color: #cbd5e1; width: 34px; height: 34px; border-radius: 11px; cursor: pointer; }
+    .ask-messages { padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+    .ask-msg { max-width: 92%; border: 1px solid rgba(255,255,255,.07); border-radius: 17px; padding: 12px 13px; color: #cbd5e1; font-size: 14px; line-height: 1.55; }
+    .ask-msg.bot { background: rgba(15,23,42,.76); align-self: flex-start; }
+    .ask-msg.user { background: linear-gradient(135deg, rgba(34,230,255,.16), rgba(139,92,246,.10)); align-self: flex-end; color: #f8fafc; border-color: rgba(34,230,255,.18); }
+    .ask-msg small { display: block; color: #64748b; font-family: var(--mono); font-size: 10px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .12em; }
+    .ask-sources { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+    .ask-source { border: 1px solid rgba(34,230,255,.18); color: var(--cyan); border-radius: 999px; padding: 5px 8px; font-family: var(--mono); font-size: 10.5px; background: rgba(34,230,255,.06); }
+    .ask-prompts { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+    .ask-prompt { border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.04); color: #a7b0c0; border-radius: 999px; padding: 7px 9px; font-size: 12px; cursor: pointer; }
+    .ask-form { padding: 12px; border-top: 1px solid rgba(255,255,255,.07); display: flex; gap: 8px; }
+    .ask-input { flex: 1; min-width: 0; border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.04); color: #f8fafc; border-radius: 14px; padding: 12px 13px; outline: none; font: inherit; font-size: 14px; }
+    .ask-input:focus { border-color: rgba(34,230,255,.32); box-shadow: 0 0 0 3px rgba(34,230,255,.08); }
+    .ask-send { border: 0; background: var(--cyan); color: #06101a; font-weight: 800; border-radius: 14px; padding: 0 15px; cursor: pointer; }
+
     @media (max-width: 1050px) {
       .hero-grid, .project-card.featured, .agent-panel, .security-panel { grid-template-columns: 1fr; }
       .terminal { max-width: 650px; }
@@ -235,6 +271,9 @@
       .signal-row, .systems-grid, .work-grid { grid-template-columns: 1fr; }
       .project-card.featured { grid-column: span 1; }
       .timeline-top { flex-direction: column; gap: 4px; }
+      .ask-widget { right: 14px; bottom: 14px; }
+      .ask-toggle { width: 132px; min-height: 50px; border-radius: 16px; }
+      .ask-panel { bottom: 62px; height: min(600px, calc(100vh - 92px)); }
     }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
   </style>
@@ -383,5 +422,206 @@
       </section>
     </main>
   </div>
+  <div class="ask-widget" id="portfolioAsk" data-open="false">
+    <section class="ask-panel" aria-label="Ask this portfolio">
+      <div class="ask-head">
+        <div>
+          <strong>Ask this portfolio</strong>
+          <p>Local RAG-style retrieval over this website. No backend or API key in this demo.</p>
+        </div>
+        <button class="ask-close" type="button" aria-label="Close portfolio assistant">×</button>
+      </div>
+      <div class="ask-messages" id="askMessages"></div>
+      <form class="ask-form" id="askForm">
+        <input class="ask-input" id="askInput" autocomplete="off" placeholder="Ask about protocols, agents, audits..." />
+        <button class="ask-send" type="submit">Ask</button>
+      </form>
+    </section>
+    <button class="ask-toggle" type="button" aria-expanded="false" aria-controls="portfolioAsk">
+      <span>Ask</span>
+      <b>this portfolio</b>
+    </button>
+  </div>
+  <script>
+    (() => {
+      const chunks = [
+        {
+          title: "Profile",
+          href: "#top",
+          text: "Bhargav Kacharla is a senior engineer focused on blockchain and agents. He designs and ships smart contracts, matching engines, risk engines, liquidation systems, cross-chain infrastructure, oracle integrations, and autonomous AI agents.",
+        },
+        {
+          title: "Core systems",
+          href: "#systems",
+          text: "He works across smart contracts, risk engines, protocol agents, cross-chain infrastructure, account abstraction, real-time indexers, security workflows, and agent orchestration.",
+        },
+        {
+          title: "Nunchi.trade",
+          href: "#work",
+          text: "At Nunchi.trade he built an on-chain CLOB matching engine for perpetuals, including matching, Clearing House settlement, risk engine, and liquidation flows with Pyth and Stork oracle integration. He also built WebSocket indexers, an AI-native CLI for liquidation and TP/SL jobs, and an on-chain agent marketplace using ERC-8004 and ERC-8183.",
+        },
+        {
+          title: "Protocol Knowledge Assistant",
+          href: "#work",
+          text: "He built a TypeScript and Bun RAG pipeline for blockchain protocol documentation with ingestion, section-aware chunking, Qdrant vector search, citation-grounded answers, incremental indexing, Postgres document registry, structured output validation, judge scoring, and retrieval and answer-quality evals.",
+        },
+        {
+          title: "Novastro",
+          href: "#work",
+          text: "At Novastro he developed a real-estate RWA tokenization platform using ERC-3643 with on-chain compliance and identity registry. He also deployed a Polygon prediction market protocol with Aave and Stader yield generation, and built the Hatchy.fun Solana token launchpad using Rust and Anchor.",
+        },
+        {
+          title: "Xalts",
+          href: "#work",
+          text: "At Xalts he implemented account abstraction with ERC-4337 paymaster integration for Avalanche subnet and Hyperledger Besu, developed infrastructure with Skandha bundlers, managed blockchain nodes and bundlers, and architected smart contracts for financial institution asset tokenization.",
+        },
+        {
+          title: "Oddz",
+          href: "#work",
+          text: "At Oddz he led smart contract development for an options trading protocol with concentrated liquidity, staking, and liquidity provisioning on Avalanche and BNB Chain. He built staking, derivative trading mechanisms, and automation for expiry handling, rewards, and risk adjustments using Chainlink Keepers and Gelato.",
+        },
+        {
+          title: "Agents",
+          href: "#agents",
+          text: "His agent work includes an AI smart-contract auditor combining LLM reasoning, Slither static analysis, and exploit knowledge; liquidation and TP/SL agents that execute jobs against live positions; and on-chain agent marketplaces where agents register, complete protocol jobs, submit proof, and claim incentives.",
+        },
+        {
+          title: "Security posture",
+          href: "#security",
+          text: "His security work focuses on accounting invariants, oracle failure modes, liquidation edge cases, permission boundaries, and upgrade paths. He worked with Quantstamp and Zellic on external audits and uses Slither and Trail of Bits tooling in development and review workflows.",
+        },
+        {
+          title: "Experience timeline",
+          href: "#timeline",
+          text: "His experience spans Nunchi.trade, Novastro, Xalts, Oddz, Rakuten, OpenText, and Tata Consultancy Services, covering protocol engineering, blockchain infrastructure, backend systems, data engineering, and software engineering foundations from 2015 onward.",
+        },
+        {
+          title: "Contact",
+          href: "#contact",
+          text: "Bhargav is available for protocol engineering, smart contract architecture, audit readiness, and autonomous agent systems for on-chain execution. Contact him by email at kacharlabhargav21@gmail.com.",
+        },
+      ];
+
+      const stopwords = new Set("a an and are as at be by can for from has he her his how i in is it me of on or our the this to using what when where who why with you your".split(" "));
+      const synonyms = {
+        rag: ["retrieval", "qdrant", "chunking", "citations", "embeddings", "knowledge"],
+        agent: ["agents", "autonomous", "automation", "cli", "marketplace", "jobs"],
+        agents: ["agent", "autonomous", "automation", "cli", "marketplace", "jobs"],
+        audit: ["audits", "security", "slither", "zellic", "quantstamp", "exploit"],
+        perps: ["perpetuals", "clob", "clearing", "liquidation", "risk"],
+        liquidation: ["liquidations", "risk", "tp", "sl", "positions"],
+        blockchain: ["protocol", "solidity", "evm", "solana", "rust", "contracts"],
+        contact: ["email", "hire", "reach", "available"],
+      };
+
+      const widget = document.getElementById("portfolioAsk");
+      const toggle = widget.querySelector(".ask-toggle");
+      const close = widget.querySelector(".ask-close");
+      const messages = document.getElementById("askMessages");
+      const form = document.getElementById("askForm");
+      const input = document.getElementById("askInput");
+
+      const normalize = (value) => value.toLowerCase().replace(/[^a-z0-9+#.-]+/g, " ").trim();
+      const tokenize = (value) => normalize(value).split(/\s+/).filter((token) => token.length > 1 && !stopwords.has(token));
+      const expandedTokens = (question) => {
+        const tokens = tokenize(question);
+        const expanded = new Set(tokens);
+        tokens.forEach((token) => (synonyms[token] || []).forEach((item) => expanded.add(item)));
+        return [...expanded];
+      };
+
+      const scoreChunk = (question, chunk) => {
+        const tokens = expandedTokens(question);
+        const haystack = normalize(`${chunk.title} ${chunk.text}`);
+        return tokens.reduce((score, token) => {
+          if (haystack.includes(token)) {
+            score += chunk.title.toLowerCase().includes(token) ? 4 : 2;
+          }
+          return score;
+        }, 0);
+      };
+
+      const retrieve = (question) => chunks
+        .map((chunk) => ({ ...chunk, score: scoreChunk(question, chunk) }))
+        .filter((chunk) => chunk.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3);
+
+      const buildAnswer = (question, hits) => {
+        const lower = question.toLowerCase();
+        if (/(email|contact|hire|reach|available)/.test(lower)) {
+          return "You can contact Bhargav at kacharlabhargav21@gmail.com. Based on the portfolio, he is relevant for protocol engineering, smart contract architecture, audit readiness, and autonomous agent systems for on-chain execution.";
+        }
+        if (hits.length === 0) {
+          return "I could not find a strong match in this portfolio. Try asking about Nunchi, RAG, smart-contract audits, liquidations, account abstraction, RWA tokenization, or protocol agents.";
+        }
+        const lead = "Based on this portfolio:";
+        const facts = hits.map((hit) => `${hit.title}: ${hit.text}`).join("\n\n");
+        return `${lead}\n\n${facts}`;
+      };
+
+      const addMessage = (kind, text, sources = []) => {
+        const node = document.createElement("div");
+        node.className = `ask-msg ${kind}`;
+        const label = kind === "bot" ? "Portfolio assistant" : "You";
+        node.innerHTML = `<small>${label}</small>${text.replace(/\n/g, "<br>")}`;
+        if (sources.length > 0) {
+          const sourceRow = document.createElement("div");
+          sourceRow.className = "ask-sources";
+          sources.forEach((source) => {
+            const link = document.createElement("a");
+            link.className = "ask-source";
+            link.href = source.href;
+            link.textContent = source.title;
+            sourceRow.appendChild(link);
+          });
+          node.appendChild(sourceRow);
+        }
+        messages.appendChild(node);
+        messages.scrollTop = messages.scrollHeight;
+      };
+
+      const ask = (question) => {
+        const clean = question.trim();
+        if (!clean) return;
+        addMessage("user", clean);
+        const hits = retrieve(clean);
+        addMessage("bot", buildAnswer(clean, hits), hits);
+      };
+
+      const addStarter = () => {
+        addMessage("bot", "Ask me about Bhargav's protocol work, AI agents, RAG pipeline, audits, or on-chain automation. This first version retrieves from the portfolio content locally.");
+        const promptRow = document.createElement("div");
+        promptRow.className = "ask-prompts";
+        ["What did he build at Nunchi?", "Does he have RAG experience?", "Summarize his audit work", "How can I contact him?"].forEach((prompt) => {
+          const button = document.createElement("button");
+          button.className = "ask-prompt";
+          button.type = "button";
+          button.textContent = prompt;
+          button.addEventListener("click", () => ask(prompt));
+          promptRow.appendChild(button);
+        });
+        messages.lastElementChild.appendChild(promptRow);
+      };
+
+      toggle.addEventListener("click", () => {
+        const isOpen = widget.dataset.open === "true";
+        widget.dataset.open = String(!isOpen);
+        toggle.setAttribute("aria-expanded", String(!isOpen));
+        if (!isOpen) input.focus();
+      });
+      close.addEventListener("click", () => {
+        widget.dataset.open = "false";
+        toggle.setAttribute("aria-expanded", "false");
+      });
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        ask(input.value);
+        input.value = "";
+      });
+
+      addStarter();
+    })();
+  </script>
 </body>
 </html>
