@@ -12,6 +12,7 @@
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Bhargav Kacharla — Protocol Engineer" />
   <meta name="twitter:description" content="DeFi infrastructure, smart contracts, risk engines, on-chain automation, and AI-powered protocol systems." />
+  <meta name="portfolio-rag-api-url" content="" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -427,7 +428,7 @@
       <div class="ask-head">
         <div>
           <strong>Ask this portfolio</strong>
-          <p>Local RAG-style retrieval over this website. No backend or API key in this demo.</p>
+          <p>RAG chatbot powered by the portfolio knowledge agent. Falls back locally when the backend is offline.</p>
         </div>
         <button class="ask-close" type="button" aria-label="Close portfolio assistant">×</button>
       </div>
@@ -520,6 +521,18 @@
       const messages = document.getElementById("askMessages");
       const form = document.getElementById("askForm");
       const input = document.getElementById("askInput");
+      const send = form.querySelector(".ask-send");
+      const configuredApiUrl = (
+        new URLSearchParams(window.location.search).get("ragApi") ||
+        document.querySelector('meta[name="portfolio-rag-api-url"]')?.content ||
+        window.PORTFOLIO_RAG_API_URL ||
+        ""
+      ).trim();
+      const agentEndpoint = configuredApiUrl
+        ? configuredApiUrl.endsWith("/agent/ask")
+          ? configuredApiUrl
+          : `${configuredApiUrl.replace(/\/$/, "")}/agent/ask`
+        : "";
 
       const normalize = (value) => value.toLowerCase().replace(/[^a-z0-9+#.-]+/g, " ").trim();
       const tokenize = (value) => normalize(value).split(/\s+/).filter((token) => token.length > 1 && !stopwords.has(token));
@@ -560,37 +573,113 @@
         return `${lead}\n\n${facts}`;
       };
 
+      const escapeHtml = (value) => value
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+      const renderSources = (node, sources = []) => {
+        const existing = node.querySelector(".ask-sources");
+        if (existing) existing.remove();
+        if (sources.length === 0) return;
+
+        const sourceRow = document.createElement("div");
+        sourceRow.className = "ask-sources";
+        sources.forEach((source) => {
+          const link = document.createElement("a");
+          link.className = "ask-source";
+          link.href = source.href || "#work";
+          link.textContent = source.title;
+          if (source.href && source.href.startsWith("http")) {
+            link.target = "_blank";
+            link.rel = "noreferrer";
+          }
+          sourceRow.appendChild(link);
+        });
+        node.appendChild(sourceRow);
+      };
+
       const addMessage = (kind, text, sources = []) => {
         const node = document.createElement("div");
         node.className = `ask-msg ${kind}`;
         const label = kind === "bot" ? "Portfolio assistant" : "You";
-        node.innerHTML = `<small>${label}</small>${text.replace(/\n/g, "<br>")}`;
-        if (sources.length > 0) {
-          const sourceRow = document.createElement("div");
-          sourceRow.className = "ask-sources";
-          sources.forEach((source) => {
-            const link = document.createElement("a");
-            link.className = "ask-source";
-            link.href = source.href;
-            link.textContent = source.title;
-            sourceRow.appendChild(link);
-          });
-          node.appendChild(sourceRow);
-        }
+        node.innerHTML = `<small>${label}</small>${escapeHtml(text).replace(/\n/g, "<br>")}`;
+        renderSources(node, sources);
         messages.appendChild(node);
+        messages.scrollTop = messages.scrollHeight;
+        return node;
+      };
+
+      const updateMessage = (node, text, sources = []) => {
+        const label = node.querySelector("small")?.outerHTML || "<small>Portfolio assistant</small>";
+        node.innerHTML = `${label}${escapeHtml(text).replace(/\n/g, "<br>")}`;
+        renderSources(node, sources);
         messages.scrollTop = messages.scrollHeight;
       };
 
-      const ask = (question) => {
+      const toAgentSources = (sources = []) => sources.slice(0, 4).map((source) => ({
+        href: "#work",
+        title: source.headingPath?.join(" > ") || source.sourcePath || `Source ${source.sourceNumber}`,
+      }));
+
+      const askAgent = async (question) => {
+        if (!agentEndpoint) return null;
+
+        const response = await fetch(agentEndpoint, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ question, topK: 4, maxTurns: 6 }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`RAG backend returned ${response.status}`);
+        }
+
+        const payload = await response.json();
+        if (!payload.answer) {
+          throw new Error("RAG backend returned no answer");
+        }
+
+        return {
+          answer: payload.answer,
+          sources: toAgentSources(payload.sources || []),
+        };
+      };
+
+      const askLocal = (question) => {
+        const hits = retrieve(question);
+        return {
+          answer: buildAnswer(question, hits),
+          sources: hits,
+        };
+      };
+
+      const ask = async (question) => {
         const clean = question.trim();
         if (!clean) return;
         addMessage("user", clean);
-        const hits = retrieve(clean);
-        addMessage("bot", buildAnswer(clean, hits), hits);
+        const pending = addMessage("bot", agentEndpoint ? "Thinking through the portfolio knowledge base..." : "Searching the local portfolio content...");
+
+        send.disabled = true;
+        input.disabled = true;
+
+        try {
+          const response = (await askAgent(clean)) || askLocal(clean);
+          updateMessage(pending, response.answer, response.sources);
+        } catch (error) {
+          const local = askLocal(clean);
+          updateMessage(pending, `${local.answer}\n\nNote: the deployed RAG backend is not reachable, so I answered from the local portfolio fallback.`, local.sources);
+        } finally {
+          send.disabled = false;
+          input.disabled = false;
+          input.focus();
+        }
       };
 
       const addStarter = () => {
-        addMessage("bot", "Ask me about Bhargav's protocol work, AI agents, RAG pipeline, audits, or on-chain automation. This first version retrieves from the portfolio content locally.");
+        addMessage("bot", "Ask me about Bhargav's protocol work, AI agents, RAG pipeline, audits, or on-chain automation. When the RAG API is configured, questions go through the production knowledge agent; otherwise this widget uses the local portfolio fallback.");
         const promptRow = document.createElement("div");
         promptRow.className = "ask-prompts";
         ["What did he build at Nunchi?", "Does he have RAG experience?", "Summarize his audit work", "How can I contact him?"].forEach((prompt) => {
