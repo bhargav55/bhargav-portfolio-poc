@@ -222,7 +222,7 @@
 
     .ask-widget { position: fixed; right: 22px; bottom: 22px; z-index: 80; font-family: var(--sans); }
     .ask-toggle {
-      width: 154px; min-height: 54px; border: 1px solid rgba(34,230,255,.34); border-radius: 18px;
+      width: 168px; min-height: 54px; border: 1px solid rgba(34,230,255,.34); border-radius: 18px;
       background: linear-gradient(135deg, rgba(34,230,255,.18), rgba(255,22,140,.14)), rgba(8,13,25,.92);
       color: #f8fafc; box-shadow: 0 18px 60px rgba(0,0,0,.42), 0 0 34px rgba(34,230,255,.18);
       display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px;
@@ -231,7 +231,7 @@
     .ask-toggle span { color: var(--cyan); font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
     .ask-toggle b { font-size: 15px; letter-spacing: -.02em; }
     .ask-panel {
-      position: absolute; right: 0; bottom: 68px; width: min(410px, calc(100vw - 28px)); height: min(620px, calc(100vh - 104px));
+      position: absolute; right: 0; bottom: 68px; width: min(410px, calc(100vw - 28px)); max-height: min(620px, calc(100vh - 104px));
       display: none; grid-template-rows: auto 1fr auto; overflow: hidden;
       border: 1px solid rgba(255,255,255,.09); border-radius: 24px;
       background: rgba(7,11,24,.96); backdrop-filter: blur(22px);
@@ -242,7 +242,7 @@
     .ask-head strong { display: block; font-size: 17px; letter-spacing: -.03em; }
     .ask-head p { margin: 5px 0 0; color: #8794aa; font-size: 12px; line-height: 1.45; }
     .ask-close { border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.04); color: #cbd5e1; width: 34px; height: 34px; border-radius: 11px; cursor: pointer; }
-    .ask-messages { padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+    .ask-messages { padding: 16px; min-height: 190px; max-height: 380px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
     .ask-msg { max-width: 92%; border: 1px solid rgba(255,255,255,.07); border-radius: 17px; padding: 12px 13px; color: #cbd5e1; font-size: 14px; line-height: 1.55; }
     .ask-msg.bot { background: rgba(15,23,42,.76); align-self: flex-start; }
     .ask-msg.user { background: linear-gradient(135deg, rgba(34,230,255,.16), rgba(139,92,246,.10)); align-self: flex-end; color: #f8fafc; border-color: rgba(34,230,255,.18); }
@@ -274,8 +274,9 @@
       .project-card.featured { grid-column: span 1; }
       .timeline-top { flex-direction: column; gap: 4px; }
       .ask-widget { right: 14px; bottom: 14px; }
-      .ask-toggle { width: 132px; min-height: 50px; border-radius: 16px; }
-      .ask-panel { bottom: 62px; height: min(600px, calc(100vh - 92px)); }
+      .ask-toggle { width: 150px; min-height: 50px; border-radius: 16px; }
+      .ask-panel { bottom: 62px; max-height: min(600px, calc(100vh - 92px)); }
+      .ask-messages { max-height: 330px; }
     }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
   </style>
@@ -425,11 +426,11 @@
     </main>
   </div>
   <div class="ask-widget" id="portfolioAsk" data-open="false">
-    <section class="ask-panel" aria-label="Ask this portfolio">
+    <section class="ask-panel" aria-label="Ask Portfolio Agent">
       <div class="ask-head">
         <div>
-          <strong>Ask this portfolio</strong>
-          <p>RAG chatbot powered by the portfolio knowledge agent. Falls back locally when the backend is offline.</p>
+          <strong>Ask Portfolio Agent</strong>
+          <p>RAG chatbot powered by Bhargav's portfolio knowledge base.</p>
         </div>
         <button class="ask-close" type="button" aria-label="Close portfolio assistant">×</button>
       </div>
@@ -441,7 +442,7 @@
     </section>
     <button class="ask-toggle" type="button" aria-expanded="false" aria-controls="portfolioAsk">
       <span>Ask</span>
-      <b>this portfolio</b>
+      <b>Portfolio Agent</b>
     </button>
   </div>
   <script>
@@ -605,7 +606,7 @@
       const addMessage = (kind, text, sources = []) => {
         const node = document.createElement("div");
         node.className = `ask-msg ${kind}`;
-        const label = kind === "bot" ? "Portfolio assistant" : "You";
+        const label = kind === "bot" ? "Portfolio Agent" : "You";
         node.innerHTML = `<small>${label}</small>${escapeHtml(text).replace(/\n/g, "<br>")}`;
         renderSources(node, sources);
         messages.appendChild(node);
@@ -614,7 +615,7 @@
       };
 
       const updateMessage = (node, text, sources = []) => {
-        const label = node.querySelector("small")?.outerHTML || "<small>Portfolio assistant</small>";
+        const label = node.querySelector("small")?.outerHTML || "<small>Portfolio Agent</small>";
         node.innerHTML = `${label}${escapeHtml(text).replace(/\n/g, "<br>")}`;
         renderSources(node, sources);
         messages.scrollTop = messages.scrollHeight;
@@ -667,7 +668,7 @@
         const clean = question.trim();
         if (!clean) return;
         addMessage("user", clean);
-        const pending = addMessage("bot", agentEndpoint ? "Thinking through the portfolio knowledge base..." : "Searching the local portfolio content...");
+        const pending = addMessage("bot", "Thinking through the portfolio knowledge base...");
 
         send.disabled = true;
         input.disabled = true;
@@ -677,7 +678,7 @@
           updateMessage(pending, response.answer, response.sources);
         } catch (error) {
           const local = askLocal(clean);
-          updateMessage(pending, `${local.answer}\n\nNote: the deployed RAG backend is not reachable, so I answered from the local portfolio fallback.`, local.sources);
+          updateMessage(pending, local.answer, local.sources);
         } finally {
           send.disabled = false;
           input.disabled = false;
@@ -686,7 +687,7 @@
       };
 
       const addStarter = () => {
-        addMessage("bot", "Ask me about Bhargav's protocol work, AI agents, RAG pipeline, audits, or on-chain automation. When the RAG API is configured, questions go through the production knowledge agent; otherwise this widget uses the local portfolio fallback.");
+        addMessage("bot", "Ask me about Bhargav's protocol work, AI agents, RAG pipeline, audits, resume, or on-chain automation.");
         const promptRow = document.createElement("div");
         promptRow.className = "ask-prompts";
         ["What did he build at Nunchi?", "Does he have RAG experience?", "Summarize his audit work", "How can I contact him?"].forEach((prompt) => {
